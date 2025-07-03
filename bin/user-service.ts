@@ -16,7 +16,10 @@ const authStack = new AuthStack(app, `${appName}-${environment}-auth-stack`, {
     'http://localhost:3000/api/auth/callback/cognito',
     'http://localhost:3000/api/auth/callback/cognito-signup'
   ],
-  logoutUrls: ['https://wordcollect.haydenturek.com', 'http://localhost:3000'],
+  logoutUrls: [
+    'https://wordcollect.haydenturek.com/logout',
+    'http://localhost:3000/logout'
+  ],
   description: 'Auth stack for user service',
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
