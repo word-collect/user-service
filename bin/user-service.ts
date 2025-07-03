@@ -12,7 +12,9 @@ const authStack = new AuthStack(app, `${appName}-${environment}-auth-stack`, {
   environment,
   callbackUrls: [
     'https://wordcollect.haydenturek.com/api/auth/callback/cognito',
-    'http://localhost:3000/api/auth/callback/cognito'
+    'https://wordcollect.haydenturek.com/api/auth/callback/cognito-signup',
+    'http://localhost:3000/api/auth/callback/cognito',
+    'http://localhost:3000/api/auth/callback/cognito-signup'
   ],
   logoutUrls: ['https://wordcollect.haydenturek.com', 'http://localhost:3000'],
   description: 'Auth stack for user service',
