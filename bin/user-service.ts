@@ -10,6 +10,11 @@ const environment = app.node.tryGetContext('environment') || 'dev'
 const authStack = new AuthStack(app, `${appName}-${environment}-auth-stack`, {
   appName,
   environment,
+  callbackUrls: [
+    'https://wordcollect.haydenturek.com/api/auth/callback/cognito',
+    'http://localhost:3000/api/auth/callback/cognito'
+  ],
+  logoutUrls: ['https://wordcollect.haydenturek.com', 'http://localhost:3000'],
   description: 'Auth stack for user service',
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,

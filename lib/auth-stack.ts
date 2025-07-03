@@ -6,12 +6,19 @@ import * as ssm from 'aws-cdk-lib/aws-ssm'
 export interface AuthStackProps extends StackProps {
   appName: string
   environment: string
+  /**
+   * The public URLs where your Next app runs.
+   * - Dev:  http://localhost:3000
+   * - Prod: https://app.example.com
+   */
+  callbackUrls: string[]
+  logoutUrls: string[]
 }
 
 export class AuthStack extends Stack {
   constructor(scope: Construct, id: string, props: AuthStackProps) {
     super(scope, id, props)
-    const { appName, environment } = props
+    const { appName, environment, callbackUrls, logoutUrls } = props
 
     const userPool = new cognito.UserPool(this, 'UserPool', {
       selfSignUpEnabled: true,
@@ -20,9 +27,35 @@ export class AuthStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY // DEV ONLY
     })
 
+    /** ➋ Hosted-UI domain (required for /oauth2/…) */
+    userPool.addDomain('Domain', {
+      cognitoDomain: {
+        /**
+         * Must be globally unique. Adjust as needed.
+         * Example: myapp-dev-auth →  myapp-dev-auth.auth.us-east-1.amazoncognito.com
+         */
+        domainPrefix: `${appName}-${environment}-auth`.toLowerCase()
+      }
+    })
+
     const client = new cognito.UserPoolClient(this, 'AppClient', {
       userPool,
+      // public SPA client → no secret, use PKCE
       generateSecret: false,
+
+      // Allow the hosted-UI code flow
+      oAuth: {
+        flows: { authorizationCodeGrant: true, implicitCodeGrant: false },
+        callbackUrls, // ⇒ [...]/api/auth/callback/cognito
+        logoutUrls // ⇒ frontend roots
+      },
+
+      // Tell Cognito we’re only using the native pool (no Google, etc. yet)
+      supportedIdentityProviders: [
+        cognito.UserPoolClientIdentityProvider.COGNITO
+      ],
+
+      // (authFlows userPassword / userSrp are optional for OAuth clients)
       authFlows: { userPassword: true, userSrp: true }
     })
 
