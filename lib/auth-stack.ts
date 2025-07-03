@@ -28,11 +28,11 @@ export class AuthStack extends Stack {
 
     // ---- surface the IDs ----
     new ssm.StringParameter(this, 'UserPoolIdParam', {
-      parameterName: `/${appName}/${environment}/cognito/userPoolId`,
+      parameterName: `/${appName}/${environment}/user-service/userPoolId`,
       stringValue: userPool.userPoolId
     })
     new ssm.StringParameter(this, 'AppClientIdParam', {
-      parameterName: `/${appName}/${environment}/cognito/appClientId`,
+      parameterName: `/${appName}/${environment}/user-service/appClientId`,
       stringValue: client.userPoolClientId
     })
 
