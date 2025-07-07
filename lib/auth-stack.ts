@@ -1,4 +1,10 @@
-import { Stack, StackProps, RemovalPolicy, CfnOutput } from 'aws-cdk-lib'
+import {
+  Stack,
+  StackProps,
+  RemovalPolicy,
+  CfnOutput,
+  Duration
+} from 'aws-cdk-lib'
 import { Construct } from 'constructs'
 import * as cognito from 'aws-cdk-lib/aws-cognito'
 import * as ssm from 'aws-cdk-lib/aws-ssm'
@@ -49,6 +55,10 @@ export class AuthStack extends Stack {
         callbackUrls, // ⇒ [...]/api/auth/callback/cognito
         logoutUrls // ⇒ frontend roots
       },
+
+      idTokenValidity: Duration.hours(1), // default?
+      accessTokenValidity: Duration.hours(1), // default?
+      refreshTokenValidity: Duration.days(30), // default?
 
       // Tell Cognito we’re only using the native pool (no Google, etc. yet)
       supportedIdentityProviders: [
